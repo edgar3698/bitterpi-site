@@ -1,4 +1,23 @@
+*{box-sizing: border-box;}
 
+
+@media (max-width: 480px){body {padding: 10px;}
+.himnakan_ramka {width: 100%;
+padding: 15px;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
 
  /* Hide arrows in WebKit browsers (Chrome, Safari) */
 input[type="number"]::-webkit-outer-spin-button,
