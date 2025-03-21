@@ -63,10 +63,10 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   
       if (res.ok) {
-        alert("Your order has been sent!");
+        alert("🎉Պատվերը հաջողությամբ ուղարկվել է։");
         form.reset();
       } else {
-        alert("Failed to send the order. Please try again.");
+        alert("💀Մի բան այն չէ։");
       }
     });
     // All required input, select, and textarea fields
