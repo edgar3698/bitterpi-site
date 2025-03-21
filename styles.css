@@ -455,6 +455,8 @@ transform: scale(1);
     padding: 5px 10px 5px 10px;
 }
 
+input:disabled {cursor: not-allowed;}
+
 
 
 
