@@ -1,10 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("JavaScript Loaded!");
     
-    
-
-
-
+function updateTitle() {
+  const title = document.getElementById("vernagir");
+  
+  title.style.fontSize = "34px"
+  title.style.fontWeight = "bolder"
+  
+  if (window.matchMedia("(max-width: 400px)").matches) {
+    title.textContent = "OvalPack";}
+    else {
+      title.textContent = "PE Փաթեթի Պատվեր";
+    }
+  }
+  window.addEventListener("resize", updateTitle);
+  updateTitle();
 
 
   const clearButton = document.querySelector(".button-x");
@@ -24,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
       { once: true }
     );
   }
-
+  
   clearButton.addEventListener("click", function (event) {
     event.preventDefault();
     form.reset();
@@ -121,13 +131,36 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // ---- Global fold validation ----
+  // Get the width and fold inputs once
+  const widthInput = form.querySelector('input[name="width"]');
+  const foldInput = form.querySelector('input[name="Fold"]');
+
+  function validateFold() {
+    const widthVal = Number(widthInput.value);
+    const foldVal = Number(foldInput.value);
+    if (!isNaN(widthVal) && !isNaN(foldVal)) {
+      if (foldVal > widthVal / 2) {
+        // Round fold to half the width and play the highlight animation
+        foldInput.value = Math.floor(widthVal / 2);
+        highlightField(foldInput);
+      }
+    }
+  }
+
+  // Attach event listeners for fold validation only once
+  if (widthInput && foldInput) {
+    widthInput.addEventListener("change", validateFold);
+    foldInput.addEventListener("change", validateFold);
+  }
+  // ---- End global fold validation ----
+
   // New logic for when Print is "Այո"
   function updatePrintYesLogic() {
     const selectedPrint = form.querySelector('input[name="Print"]:checked');
     if (!selectedPrint || selectedPrint.value !== "Այո") return;
 
     // --- Width check ---
-    const widthInput = form.querySelector('input[name="width"]');
     if (widthInput) {
       let widthVal = Number(widthInput.value);
       if (widthVal > 60) {
@@ -142,40 +175,60 @@ document.addEventListener("DOMContentLoaded", function () {
       const allowedHeights = [25, 30, 35, 40, 45, 50, 55, 60, 70, 90];
       let heightVal = Number(heightInput.value);
       if (!isNaN(heightVal)) {
-        let nearest = allowedHeights.reduce((prev, curr) => {
-          return Math.abs(curr - heightVal) < Math.abs(prev - heightVal) ? curr : prev;
-        }, allowedHeights[0]);
+        let nearest = allowedHeights.reduce((prev, curr) =>
+          Math.abs(curr - heightVal) < Math.abs(prev - heightVal) ? curr : prev,
+          allowedHeights[0]
+        );
         if (nearest !== heightVal) {
           heightInput.value = nearest;
           highlightField(heightInput);
         }
 
-        // --- Color-count restriction when height equals 90 ---
+        // --- If height equals 90 and Two-sided is "Այո", rebuild Color-count with only "1 | 1"
         if (nearest === 90) {
-          colorCount.forEach((input) => {
-            if (input.value.includes("3 Գույն") || input.value.includes("4 Գույն")) {
-              if (!input.disabled) {
-                input.disabled = true;
-                input.checked = false;
-                const label = input.closest("label");
-                if (label) {
-                  label.style.setProperty("opacity", "0.5");
-                  highlightField(label);
+          const twoSidedValue = form.querySelector('input[name="Two-sided"]:checked')?.value;
+          if (twoSidedValue === "Այո") {
+            colorCountContainer.innerHTML = "";
+            const label = document.createElement("label");
+            label.className = "radiolabel";
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "Color-count";
+            input.value = "1 | 1";
+            input.checked = true;
+            label.appendChild(input);
+            label.append(" 1 | 1");
+            colorCountContainer.appendChild(label);
+            colorCount = form.querySelectorAll('input[name="Color-count"]');
+            // After rounding height, also validate fold
+            validateFold();
+            return; // Exit to avoid further changes
+          } else {
+            // Existing logic if Two-sided is not "Այո"
+            colorCount.forEach((input) => {
+              const label = input.closest("label");
+              if (input.value.includes("3 Գույն") || input.value.includes("4 Գույն")) {
+                if (!input.disabled) {
+                  input.disabled = true;
+                  input.checked = false;
+                  if (label) {
+                    label.style.setProperty("opacity", "0.5");
+                    highlightField(label);
+                  }
+                }
+              } else {
+                if (input.disabled) {
+                  input.disabled = false;
+                  if (label) {
+                    label.style.setProperty("opacity", "1");
+                    highlightField(label);
+                  }
                 }
               }
-            } else {
-              if (input.disabled) {
-                input.disabled = false;
-                const label = input.closest("label");
-                if (label) {
-                  label.style.setProperty("opacity", "1");
-                  highlightField(label);
-                }
-              }
-            }
-          });
+            });
+          }
         } else {
-          // For any other height, ensure all color-count options are enabled
+          // For any other height, ensure all Color-count options are enabled
           colorCount.forEach((input) => {
             if (input.disabled) {
               input.disabled = false;
@@ -189,6 +242,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
     }
+
+    // Validate fold value after handling height rounding
+    validateFold();
   }
 
   function updatePrintFields() {
@@ -216,18 +272,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (twoSidedValue === "Այո") {
       if (materialValue === "PP") {
-        // When Material is PP and Two-sided is "Այո"
         options = [
           { label: "1 | 1", value: "1 | 1" },
           { label: "1 | 2", value: "1 | 2" },
           { label: "1 | 3", value: "1 | 3" },
-          
         ];
         colorCountContainer.style.gridTemplateColumns = "repeat(5, auto)";
       } else {
-        // When Two-sided is "Այո" but Material is not PP
         options = [
-          
           { label: "1 | 1", value: "1 | 1" },
           { label: "1 | 2", value: "1 | 2" },
           { label: "2 | 2", value: "2 | 2" },
@@ -236,7 +288,6 @@ document.addEventListener("DOMContentLoaded", function () {
         colorCountContainer.style.gridTemplateColumns = "repeat(5, auto)";
       }
     } else {
-      // Default options when Two-sided is not "Այո"
       options = [
         { label: "1", value: "1 Գույն" },
         { label: "2", value: "2 Գույն" },
@@ -246,7 +297,6 @@ document.addEventListener("DOMContentLoaded", function () {
       colorCountContainer.style.gridTemplateColumns = "repeat(4, auto)";
     }
 
-    // Clear and rebuild the Color-count radio buttons
     colorCountContainer.innerHTML = "";
     options.forEach((opt) => {
       const label = document.createElement("label");
@@ -261,10 +311,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     colorCount = form.querySelectorAll('input[name="Color-count"]');
     updatePrintFields();
-
   }
 
-  // Event listeners
+  // Event listeners for print, two-sided, and material
   printRadios.forEach((radio) => {
     radio.addEventListener("change", updatePrintFields);
   });
@@ -277,7 +326,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Additional listeners for width and height inputs when Print is "Այո"
-  const widthInput = form.querySelector('input[name="width"]');
   const heightInput = form.querySelector('input[name="Height"]');
   if (widthInput) {
     widthInput.addEventListener("change", function () {
@@ -299,10 +347,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Run once on page load
   updatePrintFields();
   updateColorCountOptionsBasedOnTwoSided();
-
-
-
-
   
   // Disable thickness_micron when thickness_name is not empty.
   const thicknessNameInput = form.querySelector('input[name="Thickness_name"]');
@@ -310,88 +354,63 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function updateThicknessFieldState() {
     if (thicknessNameInput.value.trim() !== "") {
-      // If thickness_name has a value, disable thickness_micron and gray it out
       thicknessMicronInput.disabled = true;
       thicknessMicronInput.style.opacity = "0.5";
     } else {
-      // If thickness_name is empty, enable thickness_micron and restore normal styling
       thicknessMicronInput.disabled = false;
       thicknessMicronInput.style.opacity = "1";
     }
   }
 
-  // Update state on input changes
   thicknessNameInput.addEventListener("input", updateThicknessFieldState);
-  // Set initial state on page load
   updateThicknessFieldState();
 
-
-//---------------------------------------------------------------------------------------------------------
-
+  //---------------------------------------------------------------------------------------------------------
 
   const countrySelect = document.getElementById("country-code");
-      const phoneInput = document.getElementById("phone-number");
+  const phoneInput = document.getElementById("phone-number");
 
-      // This function takes the raw input value and formats it according to the given pattern.
-      // The patternArray is an array of numbers (e.g. [2, 3, 3] for +374).
-      function formatPhoneNumber(value, patternArray) {
-        // Remove all non-digit characters.
-        let digits = value.replace(/\D/g, '');
-        let formatted = '';
-        let start = 0;
-        patternArray.forEach((groupLength, index) => {
-          if (digits.length > start) {
-            // Add a space before each group after the first.
-            if (index > 0) {
-              formatted += ' ';
-            }
-            formatted += digits.substr(start, groupLength);
-            start += groupLength;
-          }
-        });
-        return formatted;
-      }
-
-      // When the country selection changes, update the placeholder and max digit restriction.
-      function updatePhoneInputSettings() {
-        const selectedOption = countrySelect.options[countrySelect.selectedIndex];
-        const pattern = selectedOption.getAttribute('data-pattern');
-        const maxLength = selectedOption.getAttribute('data-maxlength');
-        // Store the max digit count (not including spaces) as a data attribute.
-        phoneInput.dataset.maxDigits = maxLength;
-        if (pattern) {
-          // Build a placeholder using "X" for each digit (e.g., "2-3-3" becomes "XX XXX XXX")
-          const groups = pattern.split('-').map(num => "X".repeat(Number(num)));
-          phoneInput.placeholder = groups.join(' ');
+  function formatPhoneNumber(value, patternArray) {
+    let digits = value.replace(/\D/g, '');
+    let formatted = '';
+    let start = 0;
+    patternArray.forEach((groupLength, index) => {
+      if (digits.length > start) {
+        if (index > 0) {
+          formatted += ' ';
         }
-        phoneInput.value = "";
+        formatted += digits.substr(start, groupLength);
+        start += groupLength;
       }
+    });
+    return formatted;
+  }
 
-      // Update settings when the country code changes.
-      countrySelect.addEventListener("change", updatePhoneInputSettings);
+  function updatePhoneInputSettings() {
+    const selectedOption = countrySelect.options[countrySelect.selectedIndex];
+    const pattern = selectedOption.getAttribute('data-pattern');
+    const maxLength = selectedOption.getAttribute('data-maxlength');
+    phoneInput.dataset.maxDigits = maxLength;
+    if (pattern) {
+      const groups = pattern.split('-').map(num => "X".repeat(Number(num)));
+      phoneInput.placeholder = groups.join(' ');
+    }
+    phoneInput.value = "";
+  }
 
-      // Listen for input on the phone number field, format and restrict the number of digits.
-      phoneInput.addEventListener("input", function () {
-        // Get the maximum digits allowed for the current country.
-        let maxDigits = parseInt(phoneInput.dataset.maxDigits, 10);
-        let digits = phoneInput.value.replace(/\D/g, '');
-        // If the user types more than allowed, trim the extra digits.
-        if (digits.length > maxDigits) {
-          digits = digits.slice(0, maxDigits);
-        }
-        // Get the formatting pattern and convert it to an array.
-        const selectedOption = countrySelect.options[countrySelect.selectedIndex];
-        const pattern = selectedOption.getAttribute('data-pattern');
-        const patternArray = pattern.split('-').map(Number);
-        // Set the formatted value back to the input.
-        phoneInput.value = formatPhoneNumber(digits, patternArray);
-      });
+  countrySelect.addEventListener("change", updatePhoneInputSettings);
 
-      // Run once on page load to set initial settings.
-      updatePhoneInputSettings();
-  
-  
-  
+  phoneInput.addEventListener("input", function () {
+    let maxDigits = parseInt(phoneInput.dataset.maxDigits, 10);
+    let digits = phoneInput.value.replace(/\D/g, '');
+    if (digits.length > maxDigits) {
+      digits = digits.slice(0, maxDigits);
+    }
+    const selectedOption = countrySelect.options[countrySelect.selectedIndex];
+    const pattern = selectedOption.getAttribute('data-pattern');
+    const patternArray = pattern.split('-').map(Number);
+    phoneInput.value = formatPhoneNumber(digits, patternArray);
+  });
 
-
+  updatePhoneInputSettings();
 });
