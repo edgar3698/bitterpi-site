@@ -252,6 +252,8 @@ document.addEventListener("DOMContentLoaded", function () {
       colorCountContainer.appendChild(label);
     });
     colorCount = form.querySelectorAll('input[name="Color-count"]');
+    updatePrintFields();
+
   }
 
   // Event listeners
@@ -289,4 +291,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Run once on page load
   updatePrintFields();
   updateColorCountOptionsBasedOnTwoSided();
+  
+
+
 });
