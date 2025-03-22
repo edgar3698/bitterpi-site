@@ -1,5 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("JavaScript Loaded!");
+    
+    
+
+
+
+
 
   const clearButton = document.querySelector(".button-x");
   const form = document.getElementById("order-form");
@@ -53,6 +59,8 @@ document.addEventListener("DOMContentLoaded", function () {
       print: form.Print?.value,
       double_sided: form["Two-sided"]?.value,
       color_count: form["Color-count"]?.value,
+      country_code: form.country-code?.value,
+      phone_number: form.phone?.value,
       comment: form.comment?.value,
     };
 
@@ -291,6 +299,98 @@ document.addEventListener("DOMContentLoaded", function () {
   // Run once on page load
   updatePrintFields();
   updateColorCountOptionsBasedOnTwoSided();
+
+
+
+
+  
+  // Disable thickness_micron when thickness_name is not empty.
+  const thicknessNameInput = form.querySelector('input[name="Thickness_name"]');
+  const thicknessMicronInput = form.querySelector('input[name="Thickness_micron"]');
+
+  function updateThicknessFieldState() {
+    if (thicknessNameInput.value.trim() !== "") {
+      // If thickness_name has a value, disable thickness_micron and gray it out
+      thicknessMicronInput.disabled = true;
+      thicknessMicronInput.style.opacity = "0.5";
+    } else {
+      // If thickness_name is empty, enable thickness_micron and restore normal styling
+      thicknessMicronInput.disabled = false;
+      thicknessMicronInput.style.opacity = "1";
+    }
+  }
+
+  // Update state on input changes
+  thicknessNameInput.addEventListener("input", updateThicknessFieldState);
+  // Set initial state on page load
+  updateThicknessFieldState();
+
+
+//---------------------------------------------------------------------------------------------------------
+
+
+  const countrySelect = document.getElementById("country-code");
+      const phoneInput = document.getElementById("phone-number");
+
+      // This function takes the raw input value and formats it according to the given pattern.
+      // The patternArray is an array of numbers (e.g. [2, 3, 3] for +374).
+      function formatPhoneNumber(value, patternArray) {
+        // Remove all non-digit characters.
+        let digits = value.replace(/\D/g, '');
+        let formatted = '';
+        let start = 0;
+        patternArray.forEach((groupLength, index) => {
+          if (digits.length > start) {
+            // Add a space before each group after the first.
+            if (index > 0) {
+              formatted += ' ';
+            }
+            formatted += digits.substr(start, groupLength);
+            start += groupLength;
+          }
+        });
+        return formatted;
+      }
+
+      // When the country selection changes, update the placeholder and max digit restriction.
+      function updatePhoneInputSettings() {
+        const selectedOption = countrySelect.options[countrySelect.selectedIndex];
+        const pattern = selectedOption.getAttribute('data-pattern');
+        const maxLength = selectedOption.getAttribute('data-maxlength');
+        // Store the max digit count (not including spaces) as a data attribute.
+        phoneInput.dataset.maxDigits = maxLength;
+        if (pattern) {
+          // Build a placeholder using "X" for each digit (e.g., "2-3-3" becomes "XX XXX XXX")
+          const groups = pattern.split('-').map(num => "X".repeat(Number(num)));
+          phoneInput.placeholder = groups.join(' ');
+        }
+        phoneInput.value = "";
+      }
+
+      // Update settings when the country code changes.
+      countrySelect.addEventListener("change", updatePhoneInputSettings);
+
+      // Listen for input on the phone number field, format and restrict the number of digits.
+      phoneInput.addEventListener("input", function () {
+        // Get the maximum digits allowed for the current country.
+        let maxDigits = parseInt(phoneInput.dataset.maxDigits, 10);
+        let digits = phoneInput.value.replace(/\D/g, '');
+        // If the user types more than allowed, trim the extra digits.
+        if (digits.length > maxDigits) {
+          digits = digits.slice(0, maxDigits);
+        }
+        // Get the formatting pattern and convert it to an array.
+        const selectedOption = countrySelect.options[countrySelect.selectedIndex];
+        const pattern = selectedOption.getAttribute('data-pattern');
+        const patternArray = pattern.split('-').map(Number);
+        // Set the formatted value back to the input.
+        phoneInput.value = formatPhoneNumber(digits, patternArray);
+      });
+
+      // Run once on page load to set initial settings.
+      updatePhoneInputSettings();
+  
+  
   
 
 

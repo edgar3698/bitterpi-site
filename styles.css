@@ -1,4 +1,7 @@
-*{box-sizing: border-box;}
+*{box-sizing: border-box;
+    /*      border: #002BFF solid 1px;         */
+}
+
 
 
 @media (max-width: 480px){body {padding: 10px;}
@@ -127,7 +130,10 @@ max-width: 100vh;
     
 }
 
-.grelutex {
+.grelutex,
+.grelutex-phone,
+.country-code
+ {
     width: 100%;
     padding: 8px;
     border: 1px solid;
@@ -142,6 +148,8 @@ max-width: 100vh;
 .grelutex-layn:hover, 
 .grelutex-mikron:hover, 
 .grelutex-thickness:hover,
+.grelutex-phone:hover,
+.country-code:hover,
 .comment:hover {
     transition: ease-in-out 0.1s;
     transform: scale(1.01); 
@@ -156,6 +164,8 @@ max-width: 100vh;
 .grelutex-layn:focus, 
 .grelutex-mikron:focus, 
 .grelutex-thickness:focus,
+.grelutex-phone:focus,
+.country-code:focus,
 .comment:focus {
     transition: 0.1s ease-in-out;
     box-shadow: 0px 0px 5px hsl(206, 100%, 50%);
@@ -311,6 +321,36 @@ max-width: 340px;
 }
 
 
+.phone-div {
+    border: solid red 1px;
+display: flex;
+width: 100%;
+padding: 5px 0;
+box-sizing: border-box;
+flex-direction: row;
+justify-content: space-evenly;
+
+}
+
+.country-code {
+    margin-right: 2%;
+    max-width: 20%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .comment {
     width: 100%; 
     max-width: 340px; 
@@ -318,6 +358,7 @@ max-width: 340px;
     height: auto; 
     overflow-y: hidden;
     padding: 10px;
+    margin-top: 20px;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 5px;
