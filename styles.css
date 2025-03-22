@@ -462,3 +462,30 @@ input:disabled {cursor: not-allowed;}
 
 
 
+
+
+/* Highlight change animation */
+.highlight-change {
+    
+    animation: highlight 0.3s ease-in-out 8;
+    box-shadow: 0 0 0 #ffffff;
+    border-color: #FF0000;
+    outline: none;
+    font-weight: bolder;
+    
+    
+    
+  }
+  
+  @keyframes highlight {
+    
+        0% {box-shadow: 0px 0px 0px red; }
+        100% {box-shadow: 0px 0px 20px red;}
+
+
+    0% { background-color: #ff9191; }
+    50% { background-color: transparent; }
+    60% { background-color: transparent; }
+      
+  }
+  
