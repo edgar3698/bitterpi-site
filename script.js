@@ -25,11 +25,11 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Form cleared!");
   });
 
+  // Prevent non-digit entry in number inputs
   document.querySelectorAll('input[type="number"]').forEach(function (input) {
     input.addEventListener("keypress", function (event) {
       if (!/[0-9]/.test(event.key)) event.preventDefault();
     });
-
     input.addEventListener("paste", function (event) {
       const pastedData = event.clipboardData.getData("text");
       if (!/^\d+$/.test(pastedData)) event.preventDefault();
@@ -53,13 +53,13 @@ document.addEventListener("DOMContentLoaded", function () {
       print: form.Print?.value,
       double_sided: form["Two-sided"]?.value,
       color_count: form["Color-count"]?.value,
-      comment: form.comment?.value
+      comment: form.comment?.value,
     };
 
     const res = await fetch("https://bitterpit.org/api/contact", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData)
+      body: JSON.stringify(formData),
     });
 
     if (res.ok) {
@@ -70,47 +70,50 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  // Custom validity messages
   const requiredFields = form.querySelectorAll("input[required], textarea[required]");
-  requiredFields.forEach(field => {
+  requiredFields.forEach((field) => {
     field.addEventListener("input", () => field.setCustomValidity(""));
-    field.addEventListener("invalid", () => field.setCustomValidity("Այս դաշտը լրացնելը պարտադիր է 😊"));
+    field.addEventListener("invalid", () =>
+      field.setCustomValidity("Այս դաշտը լրացնելը պարտադիր է 😊")
+    );
   });
 
   // Disable logic for Two-sided and Color-count when Print is "Ոչ"
   const printRadios = form.querySelectorAll('input[name="Print"]');
-  const twoSided = form.querySelectorAll('input[name="Two-sided"]');
+  const twoSidedRadios = form.querySelectorAll('input[name="Two-sided"]');
   let colorCount = form.querySelectorAll('input[name="Color-count"]');
 
-  // Container holding the color-count radio buttons
+  // Container holding the Color-count radio buttons
   const colorCountContainer = form.querySelector(".radiodiv-4");
 
   function updatePrintRelatedFields() {
     const selectedPrint = form.querySelector('input[name="Print"]:checked');
     if (selectedPrint && selectedPrint.value === "Ոչ") {
-      twoSided.forEach(input => {
+      twoSidedRadios.forEach((input) => {
         input.disabled = true;
         input.checked = false;
         input.closest("label")?.style.setProperty("opacity", "0.5");
       });
-      colorCount.forEach(input => {
+      colorCount.forEach((input) => {
         input.disabled = true;
         input.checked = false;
         input.closest("label")?.style.setProperty("opacity", "0.5");
       });
     } else {
       // Enable fields when Print is "Այո"
-      twoSided.forEach(input => {
+      twoSidedRadios.forEach((input) => {
         input.disabled = false;
         input.closest("label")?.style.setProperty("opacity", "1");
       });
-      colorCount.forEach(input => {
+      colorCount.forEach((input) => {
         input.disabled = false;
         input.closest("label")?.style.setProperty("opacity", "1");
       });
     }
   }
 
-  // New logic for when Print = "Այո"
+  // New logic for when Print is "Այո"
   function updatePrintYesLogic() {
     const selectedPrint = form.querySelector('input[name="Print"]:checked');
     if (!selectedPrint || selectedPrint.value !== "Այո") return;
@@ -141,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // --- Color-count restriction when height equals 90 ---
         if (nearest === 90) {
-          colorCount.forEach(input => {
+          colorCount.forEach((input) => {
             if (input.value.includes("3 Գույն") || input.value.includes("4 Գույն")) {
               if (!input.disabled) {
                 input.disabled = true;
@@ -164,8 +167,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
           });
         } else {
-          // For any other height value, ensure all colorCount options are enabled
-          colorCount.forEach(input => {
+          // For any other height, ensure all color-count options are enabled
+          colorCount.forEach((input) => {
             if (input.disabled) {
               input.disabled = false;
               const label = input.closest("label");
@@ -180,7 +183,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Combined update function for Print related fields
   function updatePrintFields() {
     updatePrintRelatedFields();
     const selectedPrint = form.querySelector('input[name="Print"]:checked');
@@ -189,103 +191,56 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  
-
-  // New function: update Color-count options based on Two-sided selection
+  // Combined update for Color-count options based on Two-sided and Material
   function updateColorCountOptionsBasedOnTwoSided() {
     const twoSidedValue = form.querySelector('input[name="Two-sided"]:checked')?.value;
+    const materialValue = form.querySelector('input[name="Material"]:checked')?.value;
     let options = [];
+
+    // If Two-sided is "Այո", force Print to be "Այո"
     if (twoSidedValue === "Այո") {
+      const printYesRadio = form.querySelector('input[name="Print"][value="Այո"]');
+      if (printYesRadio) {
+        printYesRadio.checked = true;
+        updatePrintFields();
+      }
+    }
 
-
-      // Force "Print" to be "Այո"
-const printYesRadio = form.querySelector('input[name="Print"][value="Այո"]');
-if (printYesRadio) {
-  printYesRadio.checked = true;
-  updatePrintFields(); // update any related logic
-}
-
-      // New options when Two-sided is "Այո"
-      options = [
-        { label: "1", value: "1" },
-        { label: "1 | 1", value: "1 | 1" },
-        { label: "1 | 2", value: "1 | 2" },
-        { label: "2 | 2", value: "2 | 2" },
-        { label: "1 | 3", value: "1 | 3" }
-      ];
-
-       // Update grid to 5 columns
-    colorCountContainer.style.gridTemplateColumns = "repeat(5, auto)";
-
-
+    if (twoSidedValue === "Այո") {
+      if (materialValue === "PP") {
+        // When Material is PP and Two-sided is "Այո"
+        options = [
+          { label: "1 | 1", value: "1 | 1" },
+          { label: "1 | 2", value: "1 | 2" },
+          { label: "1 | 3", value: "1 | 3" },
+          
+        ];
+        colorCountContainer.style.gridTemplateColumns = "repeat(5, auto)";
+      } else {
+        // When Two-sided is "Այո" but Material is not PP
+        options = [
+          
+          { label: "1 | 1", value: "1 | 1" },
+          { label: "1 | 2", value: "1 | 2" },
+          { label: "2 | 2", value: "2 | 2" },
+          { label: "1 | 3", value: "1 | 3" },
+        ];
+        colorCountContainer.style.gridTemplateColumns = "repeat(5, auto)";
+      }
     } else {
-      // Default options
+      // Default options when Two-sided is not "Այո"
       options = [
         { label: "1", value: "1 Գույն" },
         { label: "2", value: "2 Գույն" },
         { label: "3", value: "3 Գույն" },
-        { label: "4", value: "4 Գույն" }
+        { label: "4", value: "4 Գույն" },
       ];
+      colorCountContainer.style.gridTemplateColumns = "repeat(4, auto)";
     }
 
-    // New function: update Color-count options based on Material and Two-sided
-function updateColorCountOptionsBasedOnTwoSided() {
-  const materialValue = form.querySelector('input[name="Material"]:checked')?.value;
-  const twoSidedValue = form.querySelector('input[name="Two-sided"]:checked')?.value;
-  let options = [];
-
-  if (twoSidedValue === "Այո" && materialValue === "PP") {
-    // New options when Material is "PP" and Two-sided is "Այո"
-    options = [
-      { label: "1 | 1", value: "1 | 1" },
-      { label: "1 | 2", value: "1 | 2" },
-      { label: "1 | 3", value: "1 | 3" }
-    ];
-    colorCountContainer.style.gridTemplateColumns = "repeat(5, auto)";
-  } else {
-    // Default options
-    options = [
-      { label: "1", value: "1 Գույն" },
-      { label: "2", value: "2 Գույն" },
-      { label: "3", value: "3 Գույն" },
-      { label: "4", value: "4 Գույն" }
-    ];
-    colorCountContainer.style.gridTemplateColumns = "repeat(4, auto)";
-  }
-
-  // Clear the container and rebuild the radio inputs
-  colorCountContainer.innerHTML = "";
-  options.forEach(opt => {
-    const label = document.createElement("label");
-    label.className = "radiolabel";
-    const input = document.createElement("input");
-    input.type = "radio";
-    input.name = "Color-count";
-    input.value = opt.value;
-    label.appendChild(input);
-    label.append(" " + opt.label);
-    colorCountContainer.appendChild(label);
-  });
-  // Refresh the colorCount NodeList reference
-  colorCount = form.querySelectorAll('input[name="Color-count"]');
-}
-
-
-
-// Add event listeners for Two-sided and Material changes
-twoSided.forEach(radio => {
-  radio.addEventListener("change", updateColorCountOptionsBasedOnTwoSided);
-});
-
-const materialRadios = form.querySelectorAll('input[name="Material"]');
-materialRadios.forEach(radio => {
-  radio.addEventListener("change", updateColorCountOptionsBasedOnTwoSided);
-});
-
-
-    // Clear the container and build new radio inputs
+    // Clear and rebuild the Color-count radio buttons
     colorCountContainer.innerHTML = "";
-    options.forEach(opt => {
+    options.forEach((opt) => {
       const label = document.createElement("label");
       label.className = "radiolabel";
       const input = document.createElement("input");
@@ -296,21 +251,22 @@ materialRadios.forEach(radio => {
       label.append(" " + opt.label);
       colorCountContainer.appendChild(label);
     });
-    // Refresh colorCount NodeList reference
     colorCount = form.querySelectorAll('input[name="Color-count"]');
   }
 
-  // Event listener for Print radios
-  printRadios.forEach(radio => {
+  // Event listeners
+  printRadios.forEach((radio) => {
     radio.addEventListener("change", updatePrintFields);
   });
-
-  // Event listener for Two-sided radios to update Color-count options
-  twoSided.forEach(radio => {
+  twoSidedRadios.forEach((radio) => {
+    radio.addEventListener("change", updateColorCountOptionsBasedOnTwoSided);
+  });
+  const materialRadios = form.querySelectorAll('input[name="Material"]');
+  materialRadios.forEach((radio) => {
     radio.addEventListener("change", updateColorCountOptionsBasedOnTwoSided);
   });
 
-  // Additional event listeners for width and height inputs when Print is "Այո"
+  // Additional listeners for width and height inputs when Print is "Այո"
   const widthInput = form.querySelector('input[name="width"]');
   const heightInput = form.querySelector('input[name="Height"]');
   if (widthInput) {
