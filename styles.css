@@ -322,7 +322,7 @@ max-width: 340px;
 
 
 .phone-div {
-    border: solid red 1px;
+
 display: flex;
 width: 100%;
 padding: 5px 0;
