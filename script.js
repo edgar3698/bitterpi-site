@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
       print: form.Print?.value,
       double_sided: form["Two-sided"]?.value,
       color_count: form["Color-count"]?.value,
-      country_code: form.country-code?.value,
+      country_code: form["country-code"]?.value,
       phone_number: form.phone?.value,
       comment: form.comment?.value,
     };
