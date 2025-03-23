@@ -7,7 +7,7 @@ function updateTitle() {
   title.style.fontSize = "34px"
   title.style.fontWeight = "bolder"
   
-  if (window.matchMedia("(max-width: 400px)").matches) {
+  if (window.matchMedia("(max-width: 567px)").matches) {
     title.textContent = "OvalPack";}
     else {
       title.textContent = "PE Փաթեթի Պատվեր";
