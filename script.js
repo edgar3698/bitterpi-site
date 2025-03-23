@@ -367,6 +367,24 @@ function updateTitle() {
 
   //---------------------------------------------------------------------------------------------------------
 
+  
+
+  const quantityInput = document.getElementById("quantity");
+  
+  function validateQuantity() {
+    const value = parseInt(quantityInput.value, 10);
+    if (isNaN(value) || value < 100) {
+      quantityInput.value = 100;
+      highlightField(quantityInput);
+
+    }
+  }
+
+  quantityInput.addEventListener("change", validateQuantity);
+  quantityInput.addEventListener("blur", validateQuantity);
+
+  //---------------------------------------------------------------------------------------------------------
+
   const countrySelect = document.getElementById("country-code");
   const phoneInput = document.getElementById("phone-number");
 

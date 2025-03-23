@@ -1,5 +1,5 @@
 *{box-sizing: border-box;
-       /*  border: #002BFF solid 1px;         */
+        /* border: #002BFF solid 1px;         */
 }
 
 
@@ -55,7 +55,7 @@ body {
     justify-content: center;
     align-items: center;
     margin: 0;
-    padding: auto;  /* added padding for small screens */
+    padding: 0%;  /* added padding for small screens */
     background-color: #F5F5F5;
     min-height: 100vh;
 }
@@ -79,7 +79,7 @@ body {
     margin: 0 auto;   /* retains your design's max width */
     height: auto;
     min-height: 660px;
-    padding: 20px;        /* unified padding */
+    padding: 10px 20px 10px 20px;        /* unified padding */
     box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.413);
     
 }
@@ -382,7 +382,7 @@ justify-content: space-evenly;
     height: auto; 
     overflow-y: hidden;
     padding: 10px;
-    margin-top: 20px;
+    margin-top: 0;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -544,7 +544,7 @@ transform: scale(1);
     
         align-items: center;
     
-        margin-top: 5%;
+        margin-top: 3%;
     
         height: 50px;
     
