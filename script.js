@@ -348,23 +348,39 @@ function updateTitle() {
   // Run once on page load
   updatePrintFields();
   updateColorCountOptionsBasedOnTwoSided();
-  
-  // Disable thickness_micron when thickness_name is not empty.
-  const thicknessNameInput = form.querySelector('input[name="Thickness_name"]');
-  const thicknessMicronInput = form.querySelector('input[name="Thickness_micron"]');
 
-  function updateThicknessFieldState() {
-    if (thicknessNameInput.value.trim() !== "") {
-      thicknessMicronInput.disabled = true;
-      thicknessMicronInput.style.opacity = "0.5";
-    } else {
-      thicknessMicronInput.disabled = false;
-      thicknessMicronInput.style.opacity = "1";
-    }
+  //---------------------------------------------------------------------------------------------------------
+  
+  // Updated thickness fields logic
+const thicknessNameInput = form.querySelector('input[name="Thickness_name"]');
+const thicknessMicronInput = form.querySelector('input[name="Thickness_micron"]');
+
+function updateThicknessFields() {
+  const thicknessName = thicknessNameInput.value.trim();
+  const thicknessMicron = thicknessMicronInput.value.trim();
+
+  if (thicknessName !== "") {
+    // Requirement 1: Clear and disable thickness-micron when thickness-name is filled.
+    thicknessMicronInput.value = "";
+    thicknessMicronInput.disabled = true;
+    thicknessMicronInput.style.opacity = "0.5";
+  } else {
+    thicknessMicronInput.disabled = false;
+    thicknessMicronInput.style.opacity = "1";
   }
 
-  thicknessNameInput.addEventListener("input", updateThicknessFieldState);
-  updateThicknessFieldState();
+  if (thicknessMicron !== "") {
+    // Requirement 2: Remove required attribute from thickness-name when thickness-micron is filled.
+    thicknessNameInput.required = false;
+  } else {
+    thicknessNameInput.required = true;
+  }
+}
+
+thicknessNameInput.addEventListener("input", updateThicknessFields);
+thicknessMicronInput.addEventListener("input", updateThicknessFields);
+updateThicknessFields();
+
 
   //---------------------------------------------------------------------------------------------------------
 
