@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OVALPACK - PDF Statistics 2016-2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #ffffff;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .chart-container {
+            background: #f8f8f8;
+            padding: 40px;
+            padding-top: 80px;
+            border-radius: 2px;
+            overflow: visible;
+        }
+        
+        .chart {
+            display: flex;
+            align-items: flex-end;
+            height: 400px;
+            gap: 2px;
+            margin-bottom: 10px;
+            overflow: visible;
+            position: relative;
+        }
+        
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, #2d2d2d, #4a4a4a);
+            transition: all 0.3s ease;
+            position: relative;
+            min-width: 8px;
+            overflow: visible;
+        }
+        
+        .bar:hover {
+            background: linear-gradient(to top, #e74c3c, #c0392b);
+            transform: translateY(-5px);
+            z-index: 10000;
+        }
+        
+        .bar:hover .tooltip {
+            opacity: 1;
+            transform: translate(-50%, -15px);
+        }
+        
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translate(-50%, 0);
+            background: #1a1a1a;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 2px;
+            font-size: 11px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 9999;
+            margin-bottom: 10px;
+        }
+        
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #1a1a1a;
+        }
+        
+        .year-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 0 20px;
+        }
+        
+        .year-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .stat-box {
+            background: white;
+            padding: 25px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .chart-container {
+                background: white;
+                border: 1px solid #e0e0e0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">OVALPACK</div>
+            <div class="subtitle">PDF Production Statistics 2016-2025</div>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart" id="chart"></div>
+            <div class="year-labels">
+                <span class="year-label">2016</span>
+                <span class="year-label">2017</span>
+                <span class="year-label">2018</span>
+                <span class="year-label">2019</span>
+                <span class="year-label">2020</span>
+                <span class="year-label">2021</span>
+                <span class="year-label">2022</span>
+                <span class="year-label">2023</span>
+                <span class="year-label">2024</span>
+                <span class="year-label">2025</span>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="totalFiles">0</div>
+                <div class="stat-label">Total Files</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="avgPerMonth">0</div>
+                <div class="stat-label">Avg Per Month</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="peakMonth">-</div>
+                <div class="stat-label">Peak Month</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="peakValue">0</div>
+                <div class="stat-label">Peak Value</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const data = [
+            {month: '2016-08', files: 10},
+            {month: '2016-09', files: 46},
+            {month: '2016-10', files: 29},
+            {month: '2016-11', files: 80},
+            {month: '2016-12', files: 57},
+            {month: '2017-01', files: 25},
+            {month: '2017-02', files: 19},
+            {month: '2017-03', files: 80},
+            {month: '2017-04', files: 95},
+            {month: '2017-05', files: 131},
+            {month: '2017-06', files: 89},
+            {month: '2017-07', files: 97},
+            {month: '2017-08', files: 46},
+            {month: '2017-09', files: 48},
+            {month: '2017-10', files: 83},
+            {month: '2017-11', files: 62},
+            {month: '2017-12', files: 55},
+            {month: '2018-01', files: 68},
+            {month: '2018-02', files: 78},
+            {month: '2018-03', files: 109},
+            {month: '2018-04', files: 99},
+            {month: '2018-05', files: 88},
+            {month: '2018-06', files: 121},
+            {month: '2018-07', files: 49},
+            {month: '2018-08', files: 64},
+            {month: '2018-09', files: 61},
+            {month: '2018-10', files: 75},
+            {month: '2018-11', files: 97},
+            {month: '2018-12', files: 66},
+            {month: '2019-01', files: 69},
+            {month: '2019-02', files: 93},
+            {month: '2019-03', files: 146},
+            {month: '2019-04', files: 204},
+            {month: '2019-05', files: 192},
+            {month: '2019-06', files: 133},
+            {month: '2019-07', files: 117},
+            {month: '2019-08', files: 94},
+            {month: '2019-09', files: 83},
+            {month: '2019-10', files: 107},
+            {month: '2019-11', files: 82},
+            {month: '2019-12', files: 60},
+            {month: '2020-01', files: 52},
+            {month: '2020-02', files: 90},
+            {month: '2020-03', files: 100},
+            {month: '2020-04', files: 77},
+            {month: '2020-05', files: 105},
+            {month: '2020-06', files: 128},
+            {month: '2020-07', files: 118},
+            {month: '2020-08', files: 47},
+            {month: '2020-09', files: 51},
+            {month: '2020-10', files: 28},
+            {month: '2020-11', files: 25},
+            {month: '2020-12', files: 37},
+            {month: '2021-01', files: 19},
+            {month: '2021-02', files: 57},
+            {month: '2021-03', files: 98},
+            {month: '2021-04', files: 79},
+            {month: '2021-05', files: 111},
+            {month: '2021-06', files: 64},
+            {month: '2021-07', files: 93},
+            {month: '2021-08', files: 137},
+            {month: '2021-09', files: 81},
+            {month: '2021-10', files: 60},
+            {month: '2021-11', files: 46},
+            {month: '2021-12', files: 63},
+            {month: '2022-01', files: 22},
+            {month: '2022-02', files: 58},
+            {month: '2022-03', files: 100},
+            {month: '2022-04', files: 72},
+            {month: '2022-05', files: 135},
+            {month: '2022-06', files: 76},
+            {month: '2022-07', files: 52},
+            {month: '2022-08', files: 65},
+            {month: '2022-09', files: 49},
+            {month: '2022-10', files: 61},
+            {month: '2022-11', files: 36},
+            {month: '2022-12', files: 71},
+            {month: '2023-01', files: 46},
+            {month: '2023-02', files: 45},
+            {month: '2023-03', files: 96},
+            {month: '2023-04', files: 93},
+            {month: '2023-05', files: 89},
+            {month: '2023-06', files: 89},
+            {month: '2023-07', files: 93},
+            {month: '2023-08', files: 77},
+            {month: '2023-09', files: 49},
+            {month: '2023-10', files: 63},
+            {month: '2023-11', files: 55},
+            {month: '2023-12', files: 58},
+            {month: '2024-01', files: 27},
+            {month: '2024-02', files: 65},
+            {month: '2024-03', files: 88},
+            {month: '2024-04', files: 108},
+            {month: '2024-05', files: 102},
+            {month: '2024-06', files: 92},
+            {month: '2024-07', files: 51},
+            {month: '2024-08', files: 59},
+            {month: '2024-09', files: 77},
+            {month: '2024-10', files: 91},
+            {month: '2024-11', files: 44},
+            {month: '2024-12', files: 43},
+            {month: '2025-01', files: 31},
+            {month: '2025-02', files: 79},
+            {month: '2025-03', files: 76},
+            {month: '2025-04', files: 104},
+            {month: '2025-05', files: 90},
+            {month: '2025-06', files: 137},
+            {month: '2025-07', files: 98},
+            {month: '2025-08', files: 41},
+            {month: '2025-09', files: 69},
+            {month: '2025-10', files: 56},
+            {month: '2025-11', files: 54},
+            {month: '2025-12', files: 8}
+        ];
+
+        // Calculate statistics
+        const totalFiles = data.reduce((sum, item) => sum + item.files, 0);
+        const avgPerMonth = Math.round(totalFiles / data.length);
+        const peakData = data.reduce((max, item) => item.files > max.files ? item : max, data[0]);
+
+        // Update stats
+        document.getElementById('totalFiles').textContent = totalFiles.toLocaleString();
+        document.getElementById('avgPerMonth').textContent = avgPerMonth;
+        document.getElementById('peakMonth').textContent = peakData.month;
+        document.getElementById('peakValue').textContent = peakData.files;
+
+        // Create chart
+        const chart = document.getElementById('chart');
+        const maxFiles = Math.max(...data.map(d => d.files));
+
+        data.forEach(item => {
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            const heightPercent = (item.files / maxFiles) * 100;
+            bar.style.height = heightPercent + '%';
+            
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.textContent = `${item.month}: ${item.files} files`;
+            bar.appendChild(tooltip);
+            
+            chart.appendChild(bar);
+        });
+    </script>
+</body>
+</html>
