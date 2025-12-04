@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OVALPACK - PDF Statistics 2020-2025</title>
+    <title>OVALPACK - FORMAYI Statistics</title>
     <style>
         * {
             margin: 0;
@@ -42,6 +42,33 @@
             letter-spacing: 1px;
         }
         
+        .chart-section {
+            margin-bottom: 50px;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-left: 4px solid #2d2d2d;
+        }
+        
+        .chart-title.flexo {
+            border-left-color: #3498db;
+        }
+        
+        .chart-title.offset {
+            border-left-color: #e74c3c;
+        }
+        
+        .chart-title.overall {
+            border-left-color: #2d2d2d;
+        }
+        
         .chart-container {
             background: #f8f8f8;
             padding: 20px 10px;
@@ -62,17 +89,39 @@
         
         .bar {
             flex: 1;
-            background: linear-gradient(to top, #2d2d2d, #4a4a4a);
             transition: all 0.3s ease;
             position: relative;
             min-width: 2px;
             overflow: visible;
         }
         
+        .bar.flexo {
+            background: linear-gradient(to top, #2980b9, #3498db);
+        }
+        
+        .bar.offset {
+            background: linear-gradient(to top, #c0392b, #e74c3c);
+        }
+        
+        .bar.overall {
+            background: linear-gradient(to top, #2d2d2d, #4a4a4a);
+        }
+        
         .bar:hover {
-            background: linear-gradient(to top, #e74c3c, #c0392b);
             transform: translateY(-5px);
             z-index: 10000;
+        }
+        
+        .bar.flexo:hover {
+            background: linear-gradient(to top, #1abc9c, #16a085);
+        }
+        
+        .bar.offset:hover {
+            background: linear-gradient(to top, #e67e22, #d35400);
+        }
+        
+        .bar.overall:hover {
+            background: linear-gradient(to top, #8e44ad, #9b59b6);
         }
         
         .bar:hover .tooltip {
@@ -167,6 +216,10 @@
                 font-size: 14px;
             }
             
+            .chart-title {
+                font-size: 22px;
+            }
+            
             .chart-container {
                 padding: 40px;
                 padding-top: 80px;
@@ -229,145 +282,274 @@
     <div class="container">
         <div class="header">
             <div class="logo">OVALPACK</div>
-            <div class="subtitle">PDF Production Statistics 2020-2025</div>
+            <div class="subtitle">FORMAYI Production Statistics</div>
         </div>
         
-        <div class="chart-container">
-            <div class="chart" id="chart"></div>
-            <div class="year-labels">
-                <span class="year-label">2020</span>
-                <span class="year-label">2021</span>
-                <span class="year-label">2022</span>
-                <span class="year-label">2023</span>
-                <span class="year-label">2024</span>
-                <span class="year-label">2025</span>
+        <!-- FLEXO Chart -->
+        <div class="chart-section">
+            <div class="chart-title flexo">FLEXO</div>
+            <div class="chart-container">
+                <div class="chart" id="flexo-chart"></div>
+                <div class="year-labels">
+                    <span class="year-label">2022</span>
+                    <span class="year-label">2023</span>
+                    <span class="year-label">2024</span>
+                    <span class="year-label">2025</span>
+                </div>
+            </div>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="flexo-total">0</div>
+                    <div class="stat-label">Total Files</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="flexo-avg">0</div>
+                    <div class="stat-label">Avg Per Month</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="flexo-peak-month">-</div>
+                    <div class="stat-label">Peak Month</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="flexo-peak-value">0</div>
+                    <div class="stat-label">Peak Value</div>
+                </div>
             </div>
         </div>
         
-        <div class="stats">
-            <div class="stat-box">
-                <div class="stat-value" id="totalFiles">0</div>
-                <div class="stat-label">Total Files</div>
+        <!-- OFFSET Chart -->
+        <div class="chart-section">
+            <div class="chart-title offset">OFFSET</div>
+            <div class="chart-container">
+                <div class="chart" id="offset-chart"></div>
+                <div class="year-labels">
+                    <span class="year-label">2022</span>
+                    <span class="year-label">2023</span>
+                    <span class="year-label">2024</span>
+                    <span class="year-label">2025</span>
+                </div>
             </div>
-            <div class="stat-box">
-                <div class="stat-value" id="avgPerMonth">0</div>
-                <div class="stat-label">Avg Per Month</div>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="offset-total">0</div>
+                    <div class="stat-label">Total Files</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="offset-avg">0</div>
+                    <div class="stat-label">Avg Per Month</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="offset-peak-month">-</div>
+                    <div class="stat-label">Peak Month</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="offset-peak-value">0</div>
+                    <div class="stat-label">Peak Value</div>
+                </div>
             </div>
-            <div class="stat-box">
-                <div class="stat-value" id="peakMonth">-</div>
-                <div class="stat-label">Peak Month</div>
+        </div>
+        
+        <!-- OVERALL Chart -->
+        <div class="chart-section">
+            <div class="chart-title overall">OVERALL (FLEXO + OFFSET)</div>
+            <div class="chart-container">
+                <div class="chart" id="overall-chart"></div>
+                <div class="year-labels">
+                    <span class="year-label">2022</span>
+                    <span class="year-label">2023</span>
+                    <span class="year-label">2024</span>
+                    <span class="year-label">2025</span>
+                </div>
             </div>
-            <div class="stat-box">
-                <div class="stat-value" id="peakValue">0</div>
-                <div class="stat-label">Peak Value</div>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="overall-total">0</div>
+                    <div class="stat-label">Total Files</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="overall-avg">0</div>
+                    <div class="stat-label">Avg Per Month</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="overall-peak-month">-</div>
+                    <div class="stat-label">Peak Month</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="overall-peak-value">0</div>
+                    <div class="stat-label">Peak Value</div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const data = [
-            {month: '2020-01', files: 48},
-            {month: '2020-02', files: 72},
-            {month: '2020-03', files: 93},
-            {month: '2020-04', files: 51},
-            {month: '2020-05', files: 90},
-            {month: '2020-06', files: 111},
-            {month: '2020-07', files: 99},
-            {month: '2020-08', files: 33},
-            {month: '2020-09', files: 46},
-            {month: '2020-10', files: 25},
-            {month: '2020-11', files: 23},
-            {month: '2020-12', files: 35},
-            {month: '2021-01', files: 18},
-            {month: '2021-02', files: 47},
-            {month: '2021-03', files: 80},
-            {month: '2021-04', files: 64},
-            {month: '2021-05', files: 78},
-            {month: '2021-06', files: 62},
-            {month: '2021-07', files: 76},
-            {month: '2021-08', files: 85},
-            {month: '2021-09', files: 67},
-            {month: '2021-10', files: 59},
-            {month: '2021-11', files: 46},
-            {month: '2021-12', files: 61},
-            {month: '2022-01', files: 21},
-            {month: '2022-02', files: 51},
-            {month: '2022-03', files: 96},
-            {month: '2022-04', files: 68},
-            {month: '2022-05', files: 129},
-            {month: '2022-06', files: 74},
-            {month: '2022-07', files: 51},
-            {month: '2022-08', files: 64},
-            {month: '2022-09', files: 47},
-            {month: '2022-10', files: 56},
-            {month: '2022-11', files: 35},
-            {month: '2022-12', files: 71},
-            {month: '2023-01', files: 46},
-            {month: '2023-02', files: 44},
-            {month: '2023-03', files: 90},
-            {month: '2023-04', files: 85},
-            {month: '2023-05', files: 86},
-            {month: '2023-06', files: 89},
-            {month: '2023-07', files: 93},
-            {month: '2023-08', files: 77},
-            {month: '2023-09', files: 49},
-            {month: '2023-10', files: 63},
-            {month: '2023-11', files: 55},
-            {month: '2023-12', files: 58},
-            {month: '2024-01', files: 27},
-            {month: '2024-02', files: 65},
-            {month: '2024-03', files: 88},
-            {month: '2024-04', files: 108},
-            {month: '2024-05', files: 102},
-            {month: '2024-06', files: 92},
+        const flexoData = [
+            {month: '2022-10', files: 32},
+            {month: '2022-11', files: 26},
+            {month: '2022-12', files: 51},
+            {month: '2023-01', files: 23},
+            {month: '2023-02', files: 20},
+            {month: '2023-03', files: 16},
+            {month: '2023-04', files: 34},
+            {month: '2023-05', files: 39},
+            {month: '2023-06', files: 30},
+            {month: '2023-07', files: 52},
+            {month: '2023-08', files: 39},
+            {month: '2023-09', files: 26},
+            {month: '2023-10', files: 30},
+            {month: '2023-11', files: 35},
+            {month: '2023-12', files: 46},
+            {month: '2024-01', files: 17},
+            {month: '2024-02', files: 39},
+            {month: '2024-03', files: 32},
+            {month: '2024-04', files: 40},
+            {month: '2024-05', files: 43},
+            {month: '2024-06', files: 37},
+            {month: '2024-07', files: 33},
+            {month: '2024-08', files: 32},
+            {month: '2024-09', files: 49},
+            {month: '2024-10', files: 71},
+            {month: '2024-11', files: 32},
+            {month: '2024-12', files: 35},
+            {month: '2025-01', files: 16},
+            {month: '2025-02', files: 46},
+            {month: '2025-03', files: 42},
+            {month: '2025-04', files: 37},
+            {month: '2025-05', files: 43},
+            {month: '2025-06', files: 71},
+            {month: '2025-07', files: 45},
+            {month: '2025-08', files: 21},
+            {month: '2025-09', files: 36},
+            {month: '2025-10', files: 44},
+            {month: '2025-11', files: 48},
+            {month: '2025-12', files: 6}
+        ];
+
+        const offsetData = [
+            {month: '2022-09', files: 3},
+            {month: '2022-10', files: 10},
+            {month: '2022-11', files: 5},
+            {month: '2022-12', files: 15},
+            {month: '2023-01', files: 15},
+            {month: '2023-02', files: 10},
+            {month: '2023-03', files: 45},
+            {month: '2023-04', files: 32},
+            {month: '2023-05', files: 43},
+            {month: '2023-06', files: 49},
+            {month: '2023-07', files: 23},
+            {month: '2023-08', files: 34},
+            {month: '2023-09', files: 17},
+            {month: '2023-10', files: 7},
+            {month: '2023-11', files: 9},
+            {month: '2023-12', files: 10},
+            {month: '2024-01', files: 7},
+            {month: '2024-02', files: 10},
+            {month: '2024-03', files: 52},
+            {month: '2024-04', files: 60},
+            {month: '2024-05', files: 48},
+            {month: '2024-06', files: 47},
+            {month: '2024-07', files: 18},
+            {month: '2024-08', files: 21},
+            {month: '2024-09', files: 24},
+            {month: '2024-10', files: 26},
+            {month: '2024-11', files: 10},
+            {month: '2024-12', files: 6},
+            {month: '2025-01', files: 14},
+            {month: '2025-02', files: 22},
+            {month: '2025-03', files: 32},
+            {month: '2025-04', files: 66},
+            {month: '2025-05', files: 47},
+            {month: '2025-06', files: 66},
+            {month: '2025-07', files: 55},
+            {month: '2025-08', files: 20},
+            {month: '2025-09', files: 30},
+            {month: '2025-10', files: 13},
+            {month: '2025-11', files: 5},
+            {month: '2025-12', files: 2}
+        ];
+
+        const overallData = [
+            {month: '2022-09', files: 3},
+            {month: '2022-10', files: 42},
+            {month: '2022-11', files: 31},
+            {month: '2022-12', files: 66},
+            {month: '2023-01', files: 38},
+            {month: '2023-02', files: 30},
+            {month: '2023-03', files: 61},
+            {month: '2023-04', files: 66},
+            {month: '2023-05', files: 82},
+            {month: '2023-06', files: 79},
+            {month: '2023-07', files: 75},
+            {month: '2023-08', files: 73},
+            {month: '2023-09', files: 43},
+            {month: '2023-10', files: 37},
+            {month: '2023-11', files: 44},
+            {month: '2023-12', files: 56},
+            {month: '2024-01', files: 24},
+            {month: '2024-02', files: 49},
+            {month: '2024-03', files: 84},
+            {month: '2024-04', files: 100},
+            {month: '2024-05', files: 91},
+            {month: '2024-06', files: 84},
             {month: '2024-07', files: 51},
-            {month: '2024-08', files: 59},
-            {month: '2024-09', files: 77},
-            {month: '2024-10', files: 91},
-            {month: '2024-11', files: 44},
-            {month: '2024-12', files: 43},
-            {month: '2025-01', files: 31},
-            {month: '2025-02', files: 79},
-            {month: '2025-03', files: 76},
-            {month: '2025-04', files: 104},
+            {month: '2024-08', files: 53},
+            {month: '2024-09', files: 73},
+            {month: '2024-10', files: 97},
+            {month: '2024-11', files: 42},
+            {month: '2024-12', files: 41},
+            {month: '2025-01', files: 30},
+            {month: '2025-02', files: 68},
+            {month: '2025-03', files: 74},
+            {month: '2025-04', files: 103},
             {month: '2025-05', files: 90},
             {month: '2025-06', files: 137},
-            {month: '2025-07', files: 98},
+            {month: '2025-07', files: 100},
             {month: '2025-08', files: 41},
-            {month: '2025-09', files: 69},
-            {month: '2025-10', files: 56},
-            {month: '2025-11', files: 54},
+            {month: '2025-09', files: 66},
+            {month: '2025-10', files: 57},
+            {month: '2025-11', files: 53},
             {month: '2025-12', files: 8}
         ];
 
-        // Calculate statistics
-        const totalFiles = data.reduce((sum, item) => sum + item.files, 0);
-        const avgPerMonth = Math.round(totalFiles / data.length);
-        const peakData = data.reduce((max, item) => item.files > max.files ? item : max, data[0]);
+        function createChart(data, chartId, barClass) {
+            const chart = document.getElementById(chartId);
+            const maxFiles = Math.max(...data.map(d => d.files));
+
+            data.forEach(item => {
+                const bar = document.createElement('div');
+                bar.className = `bar ${barClass}`;
+                const heightPercent = (item.files / maxFiles) * 100;
+                bar.style.height = heightPercent + '%';
+                
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = `${item.month}: ${item.files} files`;
+                bar.appendChild(tooltip);
+                
+                chart.appendChild(bar);
+            });
+        }
+
+        function updateStats(data, prefix, totalCount) {
+            const total = totalCount;
+            const avgPerMonth = Math.round(data.reduce((sum, item) => sum + item.files, 0) / data.length);
+            const peakData = data.reduce((max, item) => item.files > max.files ? item : max, data[0]);
+
+            document.getElementById(`${prefix}-total`).textContent = total.toLocaleString();
+            document.getElementById(`${prefix}-avg`).textContent = avgPerMonth;
+            document.getElementById(`${prefix}-peak-month`).textContent = peakData.month;
+            document.getElementById(`${prefix}-peak-value`).textContent = peakData.files;
+        }
+
+        // Create charts
+        createChart(flexoData, 'flexo-chart', 'flexo');
+        createChart(offsetData, 'offset-chart', 'offset');
+        createChart(overallData, 'overall-chart', 'overall');
 
         // Update stats
-        document.getElementById('totalFiles').textContent = totalFiles.toLocaleString();
-        document.getElementById('avgPerMonth').textContent = avgPerMonth;
-        document.getElementById('peakMonth').textContent = peakData.month;
-        document.getElementById('peakValue').textContent = peakData.files;
-
-        // Create chart
-        const chart = document.getElementById('chart');
-        const maxFiles = Math.max(...data.map(d => d.files));
-
-        data.forEach(item => {
-            const bar = document.createElement('div');
-            bar.className = 'bar';
-            const heightPercent = (item.files / maxFiles) * 100;
-            bar.style.height = heightPercent + '%';
-            
-            const tooltip = document.createElement('div');
-            tooltip.className = 'tooltip';
-            tooltip.textContent = `${item.month}: ${item.files} files`;
-            bar.appendChild(tooltip);
-            
-            chart.appendChild(bar);
-        });
+        updateStats(flexoData, 'flexo', 1416);
+        updateStats(offsetData, 'offset', 1029);
+        updateStats(overallData, 'overall', 2445);
     </script>
 </body>
 </html>
